@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "nerfsaksham-mods",
+  "description": "Claude Code mods by Saksham Arora: frugal, teach-me, vhs and lofi.",
+  "owner": { "name": "Saksham Arora", "url": "https://saksham.digital" },
+  "plugins": [
+    {
+      "name": "frugal",
+      "source": "./plugins/frugal",
+      "description": "Cost-free mode: helper agents run on Haiku, and big files and logs are summarised by a free Gemini model instead of filling Claude's context.",
+      "category": "productivity",
+      "tags": ["mods", "cost", "gemini", "haiku"]
+    }
+  ]
+}

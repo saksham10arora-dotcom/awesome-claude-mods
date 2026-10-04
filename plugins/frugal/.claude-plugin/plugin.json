@@ -1,0 +1,41 @@
+{
+  "name": "frugal",
+  "version": "0.1.0",
+  "description": "Cost-free mode for Claude Code. Helper subagents (Explore and friends) run on Haiku, and a summarize_free tool lets Claude hand big files and logs to a free Gemini model instead of reading them whole. /frugal on, off, status. Needs function hooks (early access).",
+  "author": {
+    "name": "Saksham Arora",
+    "url": "https://saksham.digital"
+  },
+  "license": "MIT",
+  "userConfig": {
+    "geminiKey": {
+      "type": "string",
+      "title": "Gemini API key",
+      "description": "A free key from aistudio.google.com. Empty means the GEMINI_API_KEY environment variable.",
+      "sensitive": true,
+      "default": ""
+    },
+    "geminiModels": {
+      "type": "string",
+      "title": "Gemini models, in order",
+      "description": "Comma-separated. When one is busy or out of quota, the next is tried.",
+      "default": "gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-flash-latest"
+    },
+    "helperModel": {
+      "type": "string",
+      "title": "Model for helper agents",
+      "options": [
+        "haiku",
+        "sonnet"
+      ],
+      "default": "haiku",
+      "description": "Which model helper subagents run on when they do not ask for one."
+    },
+    "helperTypes": {
+      "type": "string",
+      "title": "Helper agent types",
+      "description": "Comma-separated subagent types that get the helper model when they don't ask for one.",
+      "default": "Explore,claude-code-guide,statusline-setup"
+    }
+  }
+}
