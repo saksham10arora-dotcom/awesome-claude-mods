@@ -1,0 +1,34 @@
+{
+  "name": "teach-me",
+  "version": "0.1.0",
+  "description": "Learn while Claude codes. After a turn that changed code, a quick question about that exact change appears above the prompt; answer with /a 1-4, see your weak spots with /teach stats. Needs function hooks (early access).",
+  "author": {
+    "name": "Saksham Arora",
+    "url": "https://saksham.digital"
+  },
+  "license": "MIT",
+  "userConfig": {
+    "language": {
+      "type": "string",
+      "title": "Quiz language",
+      "description": "The language questions and explanations are written in. Code stays as it is.",
+      "options": [
+        "Hinglish",
+        "English"
+      ],
+      "default": "Hinglish"
+    },
+    "quizModel": {
+      "type": "string",
+      "title": "Quiz model",
+      "description": "Model alias that writes the questions. Haiku keeps it cheap.",
+      "default": "haiku"
+    },
+    "cooldownMinutes": {
+      "type": "number",
+      "title": "Minutes between questions",
+      "description": "At most one question per this many minutes, so it never nags.",
+      "default": 4
+    }
+  }
+}
