@@ -22,7 +22,8 @@ const MUTED = '#7d828c'
 const CREAM = '#e9e4dc'
 
 type Version = { at: number; tool: string; text: string }
-type Hunk = { start: number; before: string[]; removed: string[]; added: string[]; after: string[]; addedCount: number; removedCount: number }
+type Op = { kind: ' ' | '-' | '+'; text: string }
+type Hunk = { start: number; ops: Op[]; addedCount: number; removedCount: number }
 
 // The tape and the player. Module state: a hot reload starts the tape over.
 const tape = new Map<string, Version[]>()
@@ -34,6 +35,10 @@ const files = () => [...tape.keys()]
 const base = (p: string) => p.split('/').pop() || p
 const clock = (ms: number) => new Date(ms).toTimeString().slice(0, 8)
 
+// The change between two versions as a line diff, the way git shows it: the
+// common head and tail are trimmed, the middle is diffed by longest common
+// subsequence (so a line that did not change is shown as context, not as
+// removed and added again), with CONTEXT unchanged lines around it.
 function hunk(a: string, b: string): Hunk {
   const x = a.split('\n')
   const y = b.split('\n')
@@ -41,16 +46,32 @@ function hunk(a: string, b: string): Hunk {
   while (pre < x.length && pre < y.length && x[pre] === y[pre]) pre++
   let suf = 0
   while (suf < x.length - pre && suf < y.length - pre && x[x.length - 1 - suf] === y[y.length - 1 - suf]) suf++
-  const removed = x.slice(pre, x.length - suf)
-  const added = y.slice(pre, y.length - suf)
+  const xs = x.slice(pre, x.length - suf)
+  const ys = y.slice(pre, y.length - suf)
+  const mid: Op[] = []
+  if (xs.length * ys.length <= 250_000) {
+    const L = Array.from({ length: xs.length + 1 }, () => new Array<number>(ys.length + 1).fill(0))
+    for (let i = xs.length - 1; i >= 0; i--)
+      for (let j = ys.length - 1; j >= 0; j--) L[i][j] = xs[i] === ys[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1])
+    let i = 0
+    let j = 0
+    while (i < xs.length || j < ys.length) {
+      if (i < xs.length && j < ys.length && xs[i] === ys[j]) mid.push({ kind: ' ', text: xs[i++] }), j++
+      else if (j < ys.length && (i >= xs.length || L[i][j + 1] > L[i + 1][j])) mid.push({ kind: '+', text: ys[j++] }) // ties go to '-', so removals come first, as in git
+      else mid.push({ kind: '-', text: xs[i++] })
+    }
+  } else {
+    // too big to diff line by line: show it as one replaced block
+    for (const t of xs) mid.push({ kind: '-', text: t })
+    for (const t of ys) mid.push({ kind: '+', text: t })
+  }
+  const head = x.slice(Math.max(0, pre - CONTEXT), pre).map(text => ({ kind: ' ' as const, text }))
+  const tail = y.slice(y.length - suf, Math.min(y.length, y.length - suf + CONTEXT)).map(text => ({ kind: ' ' as const, text }))
   return {
     start: Math.max(0, pre - CONTEXT) + 1,
-    before: x.slice(Math.max(0, pre - CONTEXT), pre),
-    removed,
-    added,
-    after: y.slice(y.length - suf, Math.min(y.length, y.length - suf + CONTEXT)),
-    addedCount: added.length,
-    removedCount: removed.length,
+    ops: [...head, ...mid, ...tail],
+    addedCount: mid.filter(o => o.kind === '+').length,
+    removedCount: mid.filter(o => o.kind === '-').length,
   }
 }
 
@@ -180,22 +201,25 @@ export const register: Register = on => {
       $.ui.invalidate('ui.render')
     }
 
-    // The diff, with the added lines revealed by `typed`.
-    const total = h.added.reduce((n, l) => n + l.length + 1, 0)
+    // The diff, with the added lines revealed by `typed`, in order.
+    const total = h.ops.reduce((n, o) => n + (o.kind === '+' ? o.text.length + 1 : 0), 0)
     let budget = Math.round(total * typed)
     const lines: ReturnType<typeof Text>[] = []
     let n = h.start
     const row = (mark: string, text: string, color: string, num: number | null) =>
       Text({ wrap: 'truncate', children: [Text({ color: MUTED, children: `${num === null ? '    ' : String(num).padStart(4)} ` }), Text({ color, children: `${mark} ${text}`.slice(0, width) })] })
-    for (const l of h.before) lines.push(row(' ', l, MUTED, n++))
-    for (const l of h.removed) lines.push(row('-', l, RED, null))
-    for (const l of h.added) {
-      if (budget <= 0) break
-      const shown = l.slice(0, budget)
-      budget -= l.length + 1
-      lines.push(row('+', shown + (budget < 0 ? '█' : ''), GREEN, n++))
+    for (const o of h.ops) {
+      if (o.kind === '-') {
+        lines.push(row('-', o.text, RED, null))
+      } else if (o.kind === '+') {
+        if (budget <= 0) break
+        const shown = o.text.slice(0, budget)
+        budget -= o.text.length + 1
+        lines.push(row('+', shown + (budget < 0 ? '█' : ''), GREEN, n++))
+      } else {
+        lines.push(row(' ', o.text, MUTED, n++))
+      }
     }
-    if (typed >= 1) for (const l of h.after) lines.push(row(' ', l, MUTED, n++))
     const clipped = lines.length > room ? [...lines.slice(0, room - 1), Text({ color: MUTED, children: `     ... ${lines.length - room + 1} more lines` })] : lines
 
     const rec = Math.floor(now / 500) % 2 === 0 ? '●' : ' '

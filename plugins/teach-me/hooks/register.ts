@@ -85,7 +85,6 @@ async function makeQuiz($: EngineInterface, batch: Change[], model: string, lang
     pending = quiz
     lastVerdict = null
     lastQuizAt = await $.clock.now()
-    await $.store.set('pending', quiz)
     $.ui.invalidate('ui.render')
   } finally {
     isMaking = false
@@ -134,8 +133,6 @@ export const register: Register = (on, options) => {
   on('session.start', async ($, e, next) => {
     const r = await next(e)
     enabled = (await $.store.get('enabled')) !== false
-    const saved = await $.store.get('pending')
-    if (saved && typeof saved === 'object') pending = saved as Quiz
     await $.command.register({ name: 'a', description: 'teach-me: answer the question above the prompt (1-4, or skip)', argumentHint: '<1-4 | skip>', immediate: true })
     await $.command.register({ name: 'teach', description: 'teach-me: on, off, stats, or now (a question about the last change)', argumentHint: '[on | off | stats | now]', immediate: true })
     return r
@@ -174,7 +171,6 @@ export const register: Register = (on, options) => {
     const quiz = pending
     if (arg === 'skip') {
       pending = null
-      await $.store.set('pending', null)
       $.ui.invalidate('ui.render')
       return { text: `Skipped. The answer was ${quiz.answer}) ${quiz.choices[quiz.answer - 1]}. ${quiz.why}` }
     }
@@ -183,7 +179,6 @@ export const register: Register = (on, options) => {
     const isCorrect = n === quiz.answer
     await record($, quiz.concept, isCorrect)
     pending = null
-    await $.store.set('pending', null)
     const text = isCorrect
       ? `Sahi! ${quiz.why}`
       : `Not quite: it was ${quiz.answer}) ${quiz.choices[quiz.answer - 1]}. ${quiz.why}`

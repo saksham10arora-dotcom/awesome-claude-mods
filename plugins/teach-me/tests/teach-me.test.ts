@@ -45,6 +45,13 @@ const cmd = ($: any, command: string, args: string) =>
   $.command.run({ command, args, origin: { kind: 'composer' }, presentation: { isFullscreen: false, columns: 100 } })
 const EDIT = { tool: 'Edit', file_path: '/work/api.ts', old_string: 'return fetchUser(id)', new_string: 'if (cache.has(id)) return cache.get(id)\nconst u = await fetchUser(id)\ncache.set(id, u)\nreturn u' }
 
+test('a question never outlives its session', async ($: any, on: any) => {
+  const eng = engine(on)
+  eng.store.pending = QUIZ // what an older build left behind
+  await start($)
+  expect(String((await cmd($, 'a', '2')).text)).toContain('No question waiting')
+})
+
 test('a turn that edits code produces a question about that change', async ($: any, on: any) => {
   const eng = engine(on)
   await start($)
@@ -52,7 +59,7 @@ test('a turn that edits code produces a question about that change', async ($: a
   expect(eng.prompts.length).toBe(1)
   expect(eng.prompts[0]).toContain('cache.set(id, u)')
   expect(eng.prompts[0]).toContain('Hinglish')
-  expect((eng.store.pending as any).question).toBe(QUIZ.question)
+  expect(String((await cmd($, 'a', '2')).text)).toContain('Sahi!')
 })
 
 test('a turn without edits asks nothing', async ($: any, on: any) => {
@@ -91,7 +98,6 @@ test('a reply that is not a valid quiz is ignored, not shown', async ($: any, on
   const eng = engine(on, 'sorry, I cannot do that')
   await start($)
   await turn($, EDIT)
-  expect(eng.store.pending).toBeUndefined()
   const r = await cmd($, 'a', '1')
   expect(String(r.text)).toContain('No question waiting')
 })

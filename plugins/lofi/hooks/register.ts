@@ -114,7 +114,7 @@ export const register: Register = (on, options) => {
       enabled = true
       await $.store.set('enabled', true)
       await setMood($, 'calm')
-      return { text: `lofi is on at volume ${volume}. calm now, focus while Claude works, flow when it edits hard.` }
+      return { text: 'lofi is on. calm now, focus while Claude works, flow when it edits hard.' }
     }
     if (word === 'off') {
       enabled = false

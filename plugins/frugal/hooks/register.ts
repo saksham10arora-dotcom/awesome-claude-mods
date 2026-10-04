@@ -101,7 +101,7 @@ export const register: Register = (on, options) => {
       text:
         `frugal is ${state}.\n` +
         `This session: ${plural(session.helpers, 'helper agent')} on ${helperModel}, ` +
-        `${plural(session.summaries, 'big read')} on free Gemini (${kchars(session.chars)} characters kept out of context).\n` +
+        `${plural(session.summaries, 'big read')} on free Gemini (${kchars(session.chars)} characters summarised for free).\n` +
         `All time: ${plural(life.helpers, 'helper agent')}, ${plural(life.summaries, 'big read')}, ${kchars(life.chars)} characters.\n` +
         (key ? '' : 'No Gemini key yet: set GEMINI_API_KEY, or `claude plugin configure frugal`.'),
     }
@@ -169,7 +169,7 @@ export const register: Register = (on, options) => {
     const { Box, Text } = $.ui.resolve(e)
     const parts = [
       session.helpers ? `${plural(session.helpers, 'helper')} on ${helperModel}` : '',
-      session.summaries ? `${plural(session.summaries, 'big read')} on free Gemini, ${kchars(session.chars)} chars kept out` : '',
+      session.summaries ? `${plural(session.summaries, 'big read')} on free Gemini, ${kchars(session.chars)} chars summarised free` : '',
     ].filter(Boolean)
     const line = Text({ wrap: 'truncate', children: [Text({ color: GREEN, children: '● frugal ' }), Text({ color: MUTED, children: parts.join(' · ') })] })
     return original ? Box({ flexDirection: 'column', children: [original, line] }) : line
