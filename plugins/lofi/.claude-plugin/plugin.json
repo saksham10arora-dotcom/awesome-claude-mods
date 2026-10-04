@@ -1,0 +1,21 @@
+{
+  "name": "lofi",
+  "version": "0.1.0",
+  "description": "A lofi soundtrack that follows the session: calm while Claude is idle, focus while it works, flow during heavy editing, a chime when tests pass and a low note when they fail. Off until /lofi on. Original music, synthesised for this mod. Needs function hooks (early access).",
+  "author": { "name": "Saksham Arora", "url": "https://saksham.digital" },
+  "license": "MIT",
+  "userConfig": {
+    "volume": {
+      "type": "number",
+      "title": "Volume",
+      "description": "0 to 100. /lofi vol changes it for good.",
+      "default": 30
+    },
+    "idleMinutes": {
+      "type": "number",
+      "title": "Minutes of calm after a turn",
+      "description": "How long the calm loop plays after Claude finishes before the music stops.",
+      "default": 3
+    }
+  }
+}

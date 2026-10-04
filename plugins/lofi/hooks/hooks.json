@@ -1,0 +1,4 @@
+{
+  "description": "lofi: session.start, turn.start, tool.call, turn.complete, command.run{lofi}. Plays its own audio files only. Needs CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
+  "modules": ["./register.ts"]
+}
