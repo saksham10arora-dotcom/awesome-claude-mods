@@ -1,0 +1,7 @@
+{
+  "name": "vhs",
+  "version": "0.1.0",
+  "description": "A tape of every edit Claude makes. /vhs opens a replay pane: watch each change type itself in, step with h and l, auto-play with p, and press r twice to rewind a file to any step. Needs function hooks (early access).",
+  "author": { "name": "Saksham Arora", "url": "https://saksham.digital" },
+  "license": "MIT"
+}
