@@ -70,6 +70,8 @@ claude plugin install frugal@nerfsaksham-mods
 claude plugin install lofi@nerfsaksham-mods
 ```
 
+Every option has a default, so the installer's "userConfig options not yet set" note is safe to ignore; change them any time with `/plugin configure <mod>@nerfsaksham-mods`.
+
 Or try one without installing:
 
 ```bash
