@@ -1,4 +1,0 @@
-{
-  "description": "teach-me: session.start, turn.start, tool.call (edits), turn.complete, command.run{a,teach}, ui.render{AbovePrompt}. Needs CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
-  "modules": ["./register.ts"]
-}

@@ -1,7 +1,1 @@
-node_modules
 .DS_Store
-.claude/
-*.log
-demos/work/
-demos/frames/
-demos/fdebug*
