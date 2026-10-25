@@ -185,3 +185,7 @@ Suggestions welcome: read [CONTRIBUTING.md](CONTRIBUTING.md). In short, a mod ge
 [![CC0](https://licensebuttons.net/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)
 
 To the extent possible under law, the contributors have waived all copyright to this list. Each mod has its own license.
+
+---
+
+Built by [Saksham Arora](https://saksham.digital) · [saksham.digital](https://saksham.digital)
