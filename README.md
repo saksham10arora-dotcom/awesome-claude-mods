@@ -63,6 +63,7 @@ Put cheaper models on the chores.
 - [model-router](https://github.com/promptadvisers/claude-mods-starter-kit/tree/main/plugins/model-router) - Routes supported subagent work to Sonnet or Haiku while the main conversation keeps its model.
 - [fable-pin](https://github.com/karanb192/claude-code-mods/tree/main/plugins/fable-pin) - Pins every subagent to one model, with `/fable-pin on` and `off`.
 - [cache-keeper](https://github.com/nateherkai/claude-code-mods/tree/main/cache-keeper) - Keeps a big chat's prompt cache warm and warns before an expensive cold restart. `writes files` `model calls`
+- [automode](https://github.com/mralexivy/AutoMode) - Picks the model and effort for each prompt, and requires an Opus review for risky changes. `commands` `writes files` `model calls`
 
 ## Long sessions and handoffs
 
